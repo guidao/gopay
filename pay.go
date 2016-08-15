@@ -1,4 +1,4 @@
-package pay
+package gopay
 
 import (
 	"errors"

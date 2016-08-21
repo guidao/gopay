@@ -5,40 +5,25 @@ import (
 	"gopay/client"
 	"gopay/common"
 	"gopay/constant"
-	"gopay/util"
+	//"gopay/util"
 	"strconv"
 )
 
 func Pay(charge *common.Charge) (map[string]string, error) {
 	err := checkCharge(charge)
 	if err != nil {
-		log.Error(err, charge)
-		return nil, err
-	}
-	//得到流水号
-	tradeNum, err := util.GetTradeNum()
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	charge.TradeNum = tradeNum
-	//信息写入数据库
-	log.Info(dao.Pay)
-	_, err = dao.Pay.InsertPay(charge)
-	if err != nil {
-		log.Error(err, charge)
+		//log.Error(err, charge)
 		return nil, err
 	}
 
 	ct := getPayClient(charge.PayMethod)
 	re, err := ct.Pay(charge)
 	if err != nil {
-		log.Error("支付失败:", err, charge)
+		//log.Error("支付失败:", err, charge)
 		return nil, err
 	}
 	m := make(map[string]string)
 	m["frontData"] = re
-	m["tradeNum"] = tradeNum
 	return m, err
 }
 

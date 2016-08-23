@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"time"
@@ -24,4 +25,16 @@ func LocalIP() string {
 		}
 	}
 	return ""
+}
+
+func MapStringToStruct(m map[string]string, i interface{}) error {
+	bin, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(bin, i)
+	if err != nil {
+		return err
+	}
+	return nil
 }

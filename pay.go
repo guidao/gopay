@@ -9,28 +9,23 @@ import (
 	"strconv"
 )
 
-func Pay(charge *common.Charge) (map[string]string, error) {
+func Pay(charge *common.Charge) (string, error) {
 	err := checkCharge(charge)
 	if err != nil {
 		//log.Error(err, charge)
-		return nil, err
+		return "", err
 	}
 
 	ct := getPayClient(charge.PayMethod)
 	re, err := ct.Pay(charge)
 	if err != nil {
 		//log.Error("支付失败:", err, charge)
-		return nil, err
+		return "", err
 	}
-	m := make(map[string]string)
-	m["frontData"] = re
-	return m, err
+	return re, err
 }
 
 func checkCharge(charge *common.Charge) error {
-	if charge.OrderNum == "" {
-		return errors.New("orderNum is NULL")
-	}
 	var id uint64
 	var err error
 	if charge.UserID == "" {

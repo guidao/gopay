@@ -36,7 +36,7 @@ func AliWebCallback(w http.ResponseWriter, r *http.Request) (*common.AliWebPayRe
 	err := client.DefaultAliWebClient().CheckSign(signData, m["sign"])
 	if err != nil {
 		//log.Error("签名验证失败：", err, signData, m)
-		return
+		return nil, err
 	}
 
 	var aliPay common.AliWebPayResult
@@ -156,10 +156,6 @@ func WeChatAppCallback(w http.ResponseWriter, r *http.Request) (*common.WeChatPa
 		return nil, err
 	}
 
-	// err = biz.WechatAppCallback(&reXML)
-	// if err != nil {
-	// 	returnCode = "FAIL"
-	// }
 	returnCode = "SUCCESS"
 	return &reXML, nil
 }

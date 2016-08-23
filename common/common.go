@@ -11,7 +11,6 @@ type PayClient interface {
 
 // Charge 支付参数
 type Charge struct {
-	OrderNum    string `json:"orderNum,omitempty"`
 	TradeNum    string `json:"tradeNum,omitempty"`
 	Origin      string `json:"origin,omitempty"`
 	UserID      string `json:"userId,omitempty"`

@@ -16,13 +16,15 @@ import (
 var defaultAliAppClient *AliAppClient
 
 type AliAppClient struct {
-	partnerID   string //合作者ID
-	sellerID    string
-	AppID       string // 应用ID
-	callbackURL string
-	privateKey  *rsa.PrivateKey
-	publicKey   *rsa.PublicKey
-	queryURL    string // 查询订单接口地址
+	PartnerID  string //合作者ID
+	SellerID   string
+	AppID      string // 应用ID
+	PrivateKey *rsa.PrivateKey
+	PublicKey  *rsa.PublicKey
+}
+
+func InitAliAppClient(c *AliAppClient) {
+	defaultAliAppClient = c
 }
 
 // DefaultAliAppClient 得到默认支付宝app客户端
@@ -33,14 +35,14 @@ func DefaultAliAppClient() *AliAppClient {
 func (aa *AliAppClient) Pay(charge *common.Charge) (string, error) {
 	data := make(map[string]string)
 	data["service"] = "mobile.securitypay.pay"
-	data["partner"] = aa.partnerID
+	data["partner"] = aa.PartnerID
 	data["_input_charset"] = "utf-8"
-	data["notify_url"] = aa.callbackURL
+	data["notify_url"] = charge.CallbackURL
 
 	data["out_trade_no"] = charge.TradeNum
 	data["subject"] = charge.Describe
 	data["payment_type"] = "1"
-	data["seller_id"] = aa.sellerID
+	data["seller_id"] = aa.SellerID
 	data["total_fee"] = fmt.Sprintf("%.2f", float64(charge.MoneyFee)/float64(100))
 	data["body"] = charge.Describe
 
@@ -77,7 +79,7 @@ func (aa *AliAppClient) GenSign(m map[string]string) (string, error) {
 		log.Println(err)
 	}
 	hashByte := s.Sum(nil)
-	signByte, err := aa.privateKey.Sign(rand.Reader, hashByte, crypto.SHA1)
+	signByte, err := aa.PrivateKey.Sign(rand.Reader, hashByte, crypto.SHA1)
 	if err != nil {
 		return "", err
 	}
@@ -96,5 +98,5 @@ func (aa *AliAppClient) CheckSign(data string, sign string) error {
 		return err
 	}
 	hash := s.Sum(nil)
-	return rsa.VerifyPKCS1v15(aa.publicKey, crypto.SHA1, hash[:], signByte)
+	return rsa.VerifyPKCS1v15(aa.PublicKey, crypto.SHA1, hash[:], signByte)
 }

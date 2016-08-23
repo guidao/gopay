@@ -22,9 +22,13 @@ type AliWebClient struct {
 	SellerID    string          // 卖家支付宝用户号
 	AppID       string          // 支付宝分配给开发者的应用ID ps: 查询订单用
 	CallbackURL string          // 回调接口
-	privateKey  *rsa.PrivateKey // 私钥
-	publicKey   *rsa.PublicKey  // 公钥
+	PrivateKey  *rsa.PrivateKey // 私钥
+	PublicKey   *rsa.PublicKey  // 公钥
 	PayURL      string          // 支付网管地址
+}
+
+func InitAliWebClient(c *AliWebClient) {
+	aliWebClient = c
 }
 
 // DefaultAliWebClient 默认支付宝网页支付客户端
@@ -77,7 +81,7 @@ func (ac *AliWebClient) GenSign(m map[string]string) (string, error) {
 		log.Println(err)
 	}
 	hashByte := s.Sum(nil)
-	signByte, err := ac.privateKey.Sign(rand.Reader, hashByte, crypto.SHA1)
+	signByte, err := ac.PrivateKey.Sign(rand.Reader, hashByte, crypto.SHA1)
 	if err != nil {
 		return "", err
 	}
@@ -129,5 +133,5 @@ func (ac *AliWebClient) CheckSign(signData, sign string) error {
 		return err
 	}
 	hash := s.Sum(nil)
-	return rsa.VerifyPKCS1v15(ac.publicKey, crypto.SHA1, hash, signByte)
+	return rsa.VerifyPKCS1v15(ac.PublicKey, crypto.SHA1, hash, signByte)
 }

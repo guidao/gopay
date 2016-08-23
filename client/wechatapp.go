@@ -23,19 +23,22 @@ func DefaultWechatAppClient() *WechatAppClient {
 
 // WechatAppClient 微信app支付
 type WechatAppClient struct {
-	appID       string // appID
-	mchID       string // 商户号ID
+	AppID       string // AppID
+	MchID       string // 商户号ID
 	callbackURL string // 回调地址
-	key         string // 密钥
-	payURL      string // 支付地址
-	queryURL    string // 查询订单地址
+	Key         string // 密钥
+	PayURL      string // 支付地址
+}
+
+func InitWechatClient(c *WechatAppClient) {
+	defaultWechatAppClient = c
 }
 
 // Pay 支付
 func (wechat *WechatAppClient) Pay(charge *common.Charge) (string, error) {
 	var m = make(map[string]string)
-	m["appid"] = wechat.appID
-	m["mch_id"] = wechat.mchID
+	m["appid"] = wechat.AppID
+	m["mch_id"] = wechat.MchID
 	m["nonce_str"] = util.RandomStr()
 	m["body"] = charge.Describe
 	m["out_trade_no"] = charge.TradeNum
@@ -56,7 +59,7 @@ func (wechat *WechatAppClient) Pay(charge *common.Charge) (string, error) {
 	}
 	xmlStr := fmt.Sprintf("<xml>%s</xml>", buf.String())
 
-	re, err := HTTPSC.PostData(wechat.payURL, "text/xml:charset=UTF-8", xmlStr)
+	re, err := HTTPSC.PostData(wechat.PayURL, "text/xml:charset=UTF-8", xmlStr)
 	if err != nil {
 		return "", err
 	}
@@ -78,8 +81,8 @@ func (wechat *WechatAppClient) Pay(charge *common.Charge) (string, error) {
 	}
 
 	var c = make(map[string]string)
-	c["appid"] = wechat.appID
-	c["partnerid"] = wechat.mchID
+	c["appid"] = wechat.AppID
+	c["partnerid"] = wechat.MchID
 	c["prepayid"] = xmlRe.PrepayID
 	c["package"] = "Sign=WXPay"
 	c["noncestr"] = util.RandomStr()
@@ -113,7 +116,7 @@ func (wechat *WechatAppClient) GenSign(m map[string]string) (string, error) {
 
 	sort.Strings(signData)
 	signStr := strings.Join(signData, "&")
-	signStr = signStr + "&key=" + wechat.key
+	signStr = signStr + "&key=" + wechat.Key
 	c := md5.New()
 	_, err := c.Write([]byte(signStr))
 	if err != nil {
@@ -128,7 +131,7 @@ func (wechat *WechatAppClient) GenSign(m map[string]string) (string, error) {
 
 // CheckSign 检查签名
 func (wechat *WechatAppClient) CheckSign(data string, sign string) error {
-	signData := data + "&key=" + wechat.key
+	signData := data + "&key=" + wechat.Key
 	c := md5.New()
 	_, err := c.Write([]byte(signData))
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"gopay/common"
 	"log"
+	"net/url"
 	"sort"
 	"strings"
 )
@@ -83,7 +84,7 @@ func (aa *AliAppClient) GenSign(m map[string]string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return base64.URLEncoding.EncodeToString(signByte), nil
+	return url.QueryEscape(base64.StdEncoding.EncodeToString(signByte)), nil
 }
 
 // CheckSign 检测签名

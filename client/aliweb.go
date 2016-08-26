@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"gopay/common"
 	"log"
+	"net/url"
 	"sort"
 	"strings"
 )
@@ -85,7 +86,7 @@ func (ac *AliWebClient) GenSign(m map[string]string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return base64.StdEncoding.EncodeToString(signByte), nil
+	return url.QueryEscape(base64.StdEncoding.EncodeToString(signByte)), nil
 }
 
 // ToHTML 转换form表单

@@ -20,6 +20,7 @@ type Charge struct {
 	ReturnURL   string `json:"returnURL,omitempty"`
 	ShowURL     string `json:"showURL,omitempty"`
 	Describe    string `json:"describe,omitempty"`
+	OpenID      string `json:"openid,omitempty"`
 }
 
 //PayCallback 支付返回

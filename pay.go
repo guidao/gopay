@@ -2,10 +2,10 @@ package gopay
 
 import (
 	"errors"
-	"gopay/client"
-	"gopay/common"
-	"gopay/constant"
-	//"gopay/util"
+	"github.com/guidao/gopay/client"
+	"github.com/guidao/gopay/common"
+	"github.com/guidao/gopay/constant"
+	//"github.com/guidao/gopay/util"
 	"strconv"
 )
 

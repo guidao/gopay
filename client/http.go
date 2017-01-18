@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 var (
@@ -54,9 +55,12 @@ func GetDefaultClient() *HTTPSClient {
 
 // NewHTTPSClient 获取默认https客户端
 func NewHTTPSClient() *HTTPSClient {
-	config := &tls.Config{}
+	config := &tls.Config{InsecureSkipVerify: true}
 	tr := &http.Transport{TLSClientConfig: config}
-	client := http.Client{Transport: tr}
+	client := http.Client{
+		Transport: tr,
+		Timeout:   15 * time.Second,
+	}
 	return &HTTPSClient{
 		Client: client,
 	}
